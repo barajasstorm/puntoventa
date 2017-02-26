@@ -20,6 +20,8 @@ void save();
 void load();
 void drop();
 void modify();
+void show();
+void consult();
 double search(struct item search);
 
 // structures
@@ -103,9 +105,9 @@ void adminmenu()
                 break;
             case 3: modify();
                 break;
-            case 4:
+            case 4: show();
                 break;
-            case 5:
+            case 5: consult();
                 break;
             case 6:
                 break;
@@ -234,9 +236,9 @@ void modify()
         if (found == 0 || found > 0.1)
         {
             std::cout << std::endl;
-            std::cout << std::setw(1) << "Producto       " << std::setw(8) << "$Compra  " << std::setw(16) << "$Venta  " << std::setw(24) << "Existencias  " << std::setw(30) << "Stock" << std::endl;
-            std::cout << "___________________________________________________" << std::endl;
-            std::cout << std::setw(1) << item[found].name << std::setw(8) << item[found].purchaseprice << std::setw(16) << item[found].sellingprice << std::setw(24) << item[found].stock << std::setw(30) << item[found].minstock << std::endl;
+            std::cout << "Producto" << std::setw(17) << "$Compra  " << std::setw(10) << "$Venta  " << std::setw(17) << "Existencias  " << std::setw(10) << "Stock Min" << std::endl;
+            std::cout << "______________________________________________________________" << std::endl;
+            std::cout << item[found].name << std::setw(15) << item[found].purchaseprice << std::setw(10) << item[found].sellingprice << std::setw(13) << item[found].stock << std::setw(12) << item[found].minstock << std::endl;
             std::cout << std::endl;
             std::cout << "1. Nombre" << std::endl;
             std::cout << "2. $Compra" << std::endl;
@@ -346,9 +348,9 @@ void modify()
                 {
                     std::cout << std::endl;
                     std::cout << "         El producto se encuentra inactivo!     " << std::endl << std::endl;
-                    std::cout << std::setw(1) << "Producto" << std::setw(8) << "$Compra" << std::setw(16) << "$Venta" << std::setw(24) << "Existencias" << std::setw(30) << "Stock" << std::endl;
-                    std::cout << "___________________________________________________" << std::endl;
-                    std::cout << item[-found].name << std::setw(8) << item[-found].purchaseprice << std::setw(16) << item[-found].sellingprice << std::setw(24) << item[-found].stock << std::setw(24) << item[-found].minstock << std::endl;
+                    std::cout << "Producto" << std::setw(17) << "$Compra" << std::setw(10) << "$Venta" << std::setw(17) << "Existencias" << std::setw(10) << "Stock" << std::endl;
+                    std::cout << "_________________________________________________________________" << std::endl;
+                    std::cout << item[-found].name << std::setw(15) << item[-found].purchaseprice << std::setw(10) << item[-found].sellingprice << std::setw(13) << item[-found].stock << std::setw(12) << item[-found].minstock << std::endl;
                     std::cout << std::endl;
                     std::cout << "1. Nombre" << std::endl;
                     std::cout << "2. $Compra" << std::endl;
@@ -475,10 +477,52 @@ void modify()
     }while(ans!=2);
 }
 
+// show all inventory items
 void show()
 {
     std::cout << std::endl;
-   // std::cout << "Producto" << std::setw(5) << "$Compra" << std::setw(10) << "Existencias" << std::setw(15)
+    std::cout << "Producto" << std::setw(15) << "$Compra" << std::setw(10) << "$Venta" << std::setw(17) << "Existencias" << std::setw(16) << "Stock Min" << std::endl;
+    std::cout << "________________________________________________________________________" << std::endl;
+    for (int i = 0; i < item.size(); i++){
+        if(item[i].inactive == 0) std::cout << item[i].name << std::setw(15) << item[i].purchaseprice << std::setw(10) << item[i].sellingprice << std::setw(15) << item[i].stock << std::setw(15) << item[i].minstock;
+        if(item[i].stock < item[i].minstock){
+            std::cout << " *" << std::endl;
+        } else {
+            std::cout << std::endl;
+        }
+    }
+    std::cout << std::endl;
+}
+
+// show one inventory item
+void consult(){
+    struct item articulo;
+    int ans = 0;
+    double found;
+    do{
+        std::cin.ignore();
+        std::cout << "Que producto deseas consultar? ";
+        getline(std::cin, articulo.name);
+        found = search(articulo);
+        if (found == 0.1){
+            std::cout << "El producto no existe. ";
+        }
+        if (found < 0){
+            std::cout << std::endl;
+            std::cout << "         El producto se encuentra inactivo!     " << std::endl << std::endl;
+            std::cout << "Producto" << std::setw(15) << "$Compra" << std::setw(10) << "$Venta" << std::setw(15) << "Existencias" << std::setw(9) << "Stock" << std::endl;
+            std::cout << "________________________________________________________________________" << std::endl;
+            std::cout << item[-found].name << std::setw(15) << item[-found].purchaseprice << std::setw(10) << item[-found].sellingprice << std::setw(13) << item[-found].stock << std::setw(12) << item[-found].minstock << std::endl;
+            std::cout << std::endl;
+        }
+        if (found == 0 || found > 0.1){
+            std::cout << std::endl;
+            std::cout << "Producto" << std::setw(15) << "$Compra" << std::setw(10) << "$Venta" << std::setw(15) << "Existencias" << std::setw(9) << "Stock" << std::endl;
+            std::cout << "________________________________________________________________________" << std::endl;            std::cout << item[found].name << std::setw(15) << item[found].purchaseprice << std::setw(10) << item[found].sellingprice << std::setw(13) << item[found].stock << std::setw(12) << item[found].minstock << std::endl;
+            std::cout << std::endl;        }
+        std::cout << "Deseas consultar otro producto? (1 = SI, 2 = NO): ";
+        std::cin >> ans;
+    }while(ans!=2);
 }
 
 
