@@ -110,7 +110,6 @@ std::vector<struct corte> corte;
 std::vector<struct ticket> ticket;
 std::vector<struct ssort> ssort;
 
-
 // main
 int main()
 {
@@ -1056,7 +1055,6 @@ void viewsalesperemployee()
         std::cout << std::endl;
         std::cout << "Total de transacciones: " << total << std::endl;
         std::cout << std::endl;
-        
         std::cout << "Mostrar listado en orden: " << std::endl;
         std::cout << "1. Nombre de Producto" << "\t\t A - Z" << std::endl;
         std::cout << "2. Nombre de Producto" << "\t\t Z - A" << std::endl;
@@ -1122,8 +1120,6 @@ void allsales()
     ssort.clear();
 }
 
-
-
 // view sales per employee
 void viewsales(int userid)
 {
@@ -1156,7 +1152,6 @@ void viewsales(int userid)
         std::cout << std::endl;
         std::cout << "Total de transacciones: " << total << std::endl;
         std::cout << std::endl;
-        
         std::cout << "Mostrar listado en orden: " << std::endl;
         std::cout << "1. Nombre de Producto" << "\t\t A - Z" << std::endl;
         std::cout << "2. Nombre de Producto" << "\t\t Z - A" << std::endl;
@@ -1318,7 +1313,6 @@ void sortreport(std::vector<struct ssort> list, int type)
     *itemPointer = list;
 }
 
-
 // sort list of items by name descending and ascending and by stock from lowest to highest
 void sort(std::vector<struct item> list, int type)
 {
@@ -1433,7 +1427,6 @@ void save()
         outfile.write(reinterpret_cast<char *> (&item[i].inactive),sizeof(item[i].inactive));
     }
     outfile.close();
-    
     outfile.open("users.bin", std::ios::binary);
     for(int i = 0; i < user.size(); i++)
     {
@@ -1441,9 +1434,6 @@ void save()
         outfile.write(reinterpret_cast<char *> (&user[i].password),sizeof(user[i].password));
     }
     outfile.close();
-    
-    outfile.close();
-    
     outfile.open("transactions.bin", std::ios::binary);
     for(int i = 0; i < transaction.size(); i++)
     {
@@ -1455,7 +1445,6 @@ void save()
         outfile.write(reinterpret_cast<char *> (&transaction[i].total),sizeof(transaction[i].total));
     }
     outfile.close();
-    
     outfile.open("tickets.bin", std::ios::binary);
     for(int i = 0; i < ticket.size(); i++)
     {
@@ -1464,7 +1453,6 @@ void save()
         outfile.write(reinterpret_cast<char *> (&ticket[i].total),sizeof(ticket[i].total));
     }
     outfile.close();
-    
     outfile.open("cortes.bin", std::ios::binary);
     for(int i = 0; i < corte.size(); i++)
     {
@@ -1474,7 +1462,6 @@ void save()
         outfile.write(reinterpret_cast<char *> (&corte[i].total),sizeof(corte[i].total));
     }
     outfile.close();
-    
     outfile.open("days.bin", std::ios::binary);
     for(int i = 0; i < days.size(); i++)
     {
@@ -1519,7 +1506,6 @@ void load()
         item.pop_back();
     }
     infile.close();
-    
     struct user usuario;
     infile.open("users.bin", std::ios::binary);
     if(infile.fail())
@@ -1545,7 +1531,6 @@ void load()
         user.pop_back();
     }
     infile.close();
-    
     struct transaction trans;
     infile.open("transactions.bin", std::ios::binary);
     if(infile.fail())
@@ -1575,7 +1560,6 @@ void load()
         transaction.pop_back();
     }
     infile.close();
-    
     struct ticket tick;
     infile.open("tickets.bin", std::ios::binary);
     if(infile.fail())
@@ -1602,7 +1586,6 @@ void load()
         ticket.pop_back();
     }
     infile.close();
-    
     struct corte cut;
     infile.open("cortes.bin", std::ios::binary);
     if(infile.fail())
@@ -1630,7 +1613,6 @@ void load()
         corte.pop_back();
     }
     infile.close();
-    
     struct day dia;
     infile.open("days.bin", std::ios::binary);
     if(infile.fail())
@@ -1658,20 +1640,3 @@ void load()
     }
     infile.close();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
