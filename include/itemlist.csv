@@ -1,0 +1,14 @@
+Producto,$Compra,$Venta,Existencias,Stock Min,Inactive
+Leche,31.6,63.2,7,5,0
+Arroz,1.99,3.98,19,5,0
+Maizena,14.5,28.5,23,5,0
+Cafe,10.4,20.8,8,5,0
+Frijol,6.1,12.3,10,5,0
+Sopa,7.75,15.5,2,5,0,*
+Huevos,11.2,22.4,24,5,0
+Harina,12.3,24.6,8,5,0
+Azucar,4.99,9.98,23,5,0
+Aceite,6.7,13.4,19,5,0
+Manteca,9.9,19.8,0,5,0,*
+Papa,2.5,5.12,5,5,0
+Pierna,3.3,6.5,12,5,0
