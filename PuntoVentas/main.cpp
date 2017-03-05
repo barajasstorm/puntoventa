@@ -2,8 +2,6 @@
 //  main.cpp
 //  PuntoVentas
 //
-//  Created by Juan Barajas on 2/26/17.
-//  Copyright © 2017 Juan Barajas. All rights reserved.
 //
 
 #include <iostream>
@@ -36,6 +34,8 @@ void viewsales(int userid);
 void salesreport();
 void allsales();
 void viewsalesperemployee();
+void settoRand(); //hidden admin option 9, set all stock items to rand between 0 and 30
+void outputcsv(); //hideen admin option 10, save item list to CSV file
 void sortreport(std::vector<struct ssort> list, int type);
 void sort(std::vector<struct item> vsort, int type);
 
@@ -144,6 +144,7 @@ int main()
     
   }while(ans!=3);
   save();
+  show();
   return 0;
 }
 
@@ -183,6 +184,10 @@ void adminmenu()
         break;
       case 8:
         break;
+      case 9: settoRand();
+        break;
+      case 10: outputcsv();
+        break;
       default:
         std::cout << "La opcion seleccionada no es valida." << std::endl;
         std::cin.clear();
@@ -202,6 +207,8 @@ void create()
     std::cin.ignore();
     std::cout << "\nIngresar nombre de producto: ";
     getline(std::cin, articulo.name);
+    articulo.name[0] = toupper(articulo.name[0]);
+    for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
     found = search(articulo);
     if(found == 0.1)
     {
@@ -259,6 +266,8 @@ void drop()
   {
     std::cout << "\nQue producto desea dar de baja? ";
     getline(std::cin, articulo.name);
+    articulo.name[0] = toupper(articulo.name[0]);
+    for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
     found = search(articulo);
     if(found == 0.1)
     {
@@ -297,13 +306,15 @@ void drop()
 void modify()
 {
   struct item articulo;
-  double found;
-  int ans, ans2, ans3, ans4;
+  double found, found2;
+  int ans, ans2, ans3, ans4, ans5 = 0;
   do
   {
     std::cin.ignore();
     std::cout << "Que producto desea modificar? ";
     getline(std::cin, articulo.name);
+    articulo.name[0] = toupper(articulo.name[0]);
+    for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
     found = search(articulo);
     if (found == 0 || found > 0.1)
     {
@@ -323,22 +334,34 @@ void modify()
       std::cout << std::endl;
       switch(ans3){
         case 1:
-          std::cin.ignore();
-          std::cout << "Ingresar el nuevo nombre para el producto '" << item[found].name << "': ";
-          getline(std::cin, articulo.name);
-          std::cout << std::endl;
-          std::cout << "Confirmar el cambio de '" << item[found].name << "' a '" << articulo.name << "' (1 = Confirmar, 2 = Cancelar): ";
-          std::cin >> ans4;
-          std::cout << std::endl;
-          if (ans4==1){
-            item[found].name = articulo.name;
-            std::cout << "Cambio exitoso." << std::endl;
-            std::cout << std::endl;
-          }
-          else if (ans4==2){
-            std::cout << "Cancelado" << std::endl;
-            std::cout << std::endl;
-          }
+          do
+          {
+            std::cin.ignore();
+            std::cout << "Ingresar el nuevo nombre para el producto '" << item[found].name << "': ";
+            getline(std::cin, articulo.name);
+            articulo.name[0] = toupper(articulo.name[0]);
+            for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
+            found2 = search(articulo);
+            if (found == 0 || found > 0.1 || found < 0) std::cout << "El nombre ya esta en uso" << std::endl;
+            if (found == 0.1)
+            {
+              std::cout << std::endl;
+              std::cout << "Confirmar el cambio de '" << item[found].name << "' a '" << articulo.name << "' (1 = Confirmar, 2 = Cancelar): ";
+              std::cin >> ans4;
+              std::cout << std::endl;
+              if (ans4==1){
+                item[found].name = articulo.name;
+                std::cout << "Cambio exitoso." << std::endl;
+                std::cout << std::endl;
+                ans5 = 2;
+              }
+              else if (ans4==2){
+                std::cout << "Cancelado. Desea intentar otro nombre? (1 = SI, 2 =  NO): ";
+                std::cin >> ans5;
+                std::cout << std::endl;
+              }
+            }
+          }while(ans5 == 1);
           break;
         case 2:
           std::cout << "Ingresar el nuevo precio de $Compra para el producto '" << item[found].name << "': ";
@@ -435,22 +458,34 @@ void modify()
           switch(ans3)
           {
             case 1:
-              std::cin.ignore();
-              std::cout << "Ingresar el nuevo nombre para el producto '" << item[-found].name << "': ";
-              getline(std::cin, articulo.name);
-              std::cout << "Confirmar el cambio de '" << item[-found].name << "' a '" << articulo.name << "' (1 = Confirmar, 2 = Cancelar): ";
-              std::cin >> ans4;
-              if (ans4==1)
+              do
               {
-                item[-found].name = articulo.name;
-                std::cout << "Cambio exitoso." << std::endl;
-                std::cout << std::endl;
-              }
-              else if (ans4==2)
-              {
-                std::cout << "Cancelado" << std::endl;
-                std::cout << std::endl;
-              }
+                std::cin.ignore();
+                std::cout << "Ingresar el nuevo nombre para el producto '" << item[-found].name << "': ";
+                getline(std::cin, articulo.name);
+                articulo.name[0] = toupper(articulo.name[0]);
+                for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
+                found2 = search(articulo);
+                if (found == 0 || found > 0.1 || found < 0) std::cout << "El nombre ya esta en uso" << std::endl;
+                if (found == 0.1)
+                {
+                  std::cout << std::endl;
+                  std::cout << "Confirmar el cambio de '" << item[-found].name << "' a '" << articulo.name << "' (1 = Confirmar, 2 = Cancelar): ";
+                  std::cin >> ans4;
+                  std::cout << std::endl;
+                  if (ans4==1){
+                    item[-found].name = articulo.name;
+                    std::cout << "Cambio exitoso." << std::endl;
+                    std::cout << std::endl;
+                    ans5 = 2;
+                  }
+                  else if (ans4==2){
+                    std::cout << "Cancelado. Desea intentar otro nombre? (1 = SI, 2 =  NO): ";
+                    std::cin >> ans5;
+                    std::cout << std::endl;
+                  }
+                }
+              }while(ans5 == 1);
               break;
             case 2:
               std::cout << "Ingresar el nuevo precio de $Compra para el producto '" << item[-found].name << "': ";
@@ -561,7 +596,7 @@ void show()
     std::cout << "________________________________________________________________________" << std::endl;
     for (int i = 0; i < item.size(); i++){
       if(vsort[i].inactive == 0) std::cout << std::setw(20) << std::left << vsort[i].name << std::setw(15) << vsort[i].purchaseprice << std::setw(10) << vsort[i].sellingprice << std::setw(15) << vsort[i].stock << std::setw(3) << vsort[i].minstock;
-      if(vsort[i].stock < vsort[i].minstock)
+      if(vsort[i].stock <= vsort[i].minstock)
       {
         std::cout << " *" << std::endl;
       }
@@ -593,6 +628,8 @@ void consult()
     std::cin.ignore();
     std::cout << "Que producto deseas consultar? ";
     getline(std::cin, articulo.name);
+    articulo.name[0] = toupper(articulo.name[0]);
+    for(int x = 1; x < articulo.name.size(); x++) articulo.name[x] = tolower(articulo.name[x]);
     found = search(articulo);
     if (found == 0.1)
     {
@@ -604,7 +641,7 @@ void consult()
       std::cout << "         El producto se encuentra inactivo!     " << std::endl << std::endl;
       std::cout << std::setw(15) << std::left << "Producto" << std::setw(17) << "\t $Compra" << std::setw(10) << "$Venta" << std::setw(12) << "Stock" << std::setw(13) << "Stock Min" << std::endl;
       std::cout << "________________________________________________________________________" << std::endl;            std::cout << std::setw(20) << std::left << item[-found].name << std::setw(15) << item[-found].purchaseprice << std::setw(10) << item[-found].sellingprice << std::setw(15) << item[-found].stock << std::setw(3) << item[-found].minstock;
-      if(item[-found].stock < item[-found].minstock){
+      if(item[-found].stock <= item[-found].minstock){
         std::cout << " *" << std::endl;
       } else {
         std::cout << std::endl;
@@ -616,7 +653,7 @@ void consult()
       std::cout << std::endl;
       std::cout << std::setw(15) << std::left << "Producto" << std::setw(17) << "\t $Compra" << std::setw(10) << "$Venta" << std::setw(12) << "Stock" << std::setw(13) << "Stock Min" << std::endl;
       std::cout << "________________________________________________________________________" << std::endl;            std::cout << std::setw(20) << std::left << item[found].name << std::setw(15) << item[found].purchaseprice << std::setw(10) << item[found].sellingprice << std::setw(15) << item[found].stock << std::setw(3) << item[found].minstock;
-      if(item[found].stock < item[found].minstock){
+      if(item[found].stock <= item[found].minstock){
         std::cout << " *" << std::endl;
       } else {
         std::cout << std::endl;
@@ -681,6 +718,8 @@ void newuser()
     std::cout << "Creando usuario..." << std::endl;
     std::cout << "Ingresar nombre de usuario: ";
     getline(std::cin, usuario.name);
+    usuario.name[0] = toupper(usuario.name[0]);
+    for(int x = 1; x < usuario.name.size(); x++) usuario.name[x] = tolower(usuario.name[x]);
     found = searchuser(usuario);
     if (found==false)
     {
@@ -728,6 +767,7 @@ bool searchuser(struct user name)
 void edituser(){
   int ans = 0, ans2 = 0;
   int userid, modtype;
+  bool found;
   struct user temporary;
   std::cin.ignore();
   do{
@@ -751,8 +791,15 @@ void edituser(){
       std::cout << "\nIngresar nuevo nombre para el usuario '" << user[userid-1].name << "': ";
       std::cin.ignore();
       getline(std::cin, temporary.name);
-      user[userid-1].name = temporary.name;
-      std::cout << "\nCambio exitoso!" << std::endl << std::endl;
+      temporary.name[0] = toupper(temporary.name[0]);
+      for(int x = 1; x < temporary.name.size(); x++) temporary.name[x] = tolower(temporary.name[x]);
+      found = searchuser(temporary);
+      if(found == true) std::cout << "El nombre ya esta en uso." << std::endl;
+      else
+      {
+        user[userid-1].name = temporary.name;
+        std::cout << "\nCambio exitoso!" << std::endl << std::endl;
+      }
     }
     if(modtype==2){
       std::cout << "\nIngresar nueva contraseña para el usuario '" << user[userid-1].name << "': ";
@@ -887,10 +934,12 @@ void salesday(int userid)
           struct transaction transTmp;
           transaction_count = 0;
           for(int i = 0; i < transaction.size(); i++) transaction_count++;
-          std::cout << "Transaccion #" << transaction_count << std::endl;          
+          std::cout << "Transaccion #" << transaction_count << std::endl;
           std::cin.ignore();
           std::cout << "\nNombre de producto a vender: ";
           getline(std::cin, itemTmp.name);
+          itemTmp.name[0] = toupper(itemTmp.name[0]);
+          for(int y = 1; y < itemTmp.name.size(); y++) itemTmp.name[y] = tolower(itemTmp.name[y]);
           found = search(itemTmp);
           if (found==0 || found>0.1)
           {
@@ -1043,7 +1092,7 @@ void viewsalesperemployee()
     std::cout << "_______________________________________________________________" << std::endl;
     for(int i = 0; i < ssort.size(); i++)
     {
-      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << ssort[i].year << "\t\t" << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" <<  ssort[i].total << "  \t  " <<  ssort[i].description << std::endl;
+      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << std::left << std::setw(6) << ssort[i].year << "\t\t" << std::internal << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" <<  ssort[i].total << "  \t  " <<  ssort[i].description << std::endl;
       total++;
     }
     std::cout << std::endl;
@@ -1093,7 +1142,7 @@ void allsales()
     std::cout << "_______________________________________________________________________________________" << std::endl;
     for(int i = 0; i < ssort.size(); i++)
     {
-      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << ssort[i].year << "\t\t" << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" << std::left << std::setw(8) << ssort[i].total << std::left << std::setw(15)  << ssort[i].description << std::setw(12) << std::left << ssort[i].name << std::endl;
+      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << std::left << std::setw(6) << ssort[i].year << std::internal << "\t\t" << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" << std::left << std::setw(8) << ssort[i].total << std::left << std::setw(15)  << ssort[i].description << std::setw(12) << std::left << ssort[i].name << std::endl;
       total++;
     }
     std::cout << std::endl;
@@ -1140,7 +1189,7 @@ void viewsales(int userid)
     std::cout << "_______________________________________________________________" << std::endl;
     for(int i = 0; i < ssort.size(); i++)
     {
-      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << ssort[i].year << "\t\t" << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" <<  ssort[i].total << "  \t  " <<  ssort[i].description << std::endl;
+      std::cout << ssort[i].day << "-" << ssort[i].month << "-" << std::setw(6) << ssort[i].year << "\t\t" << ssort[i].corteID << "\t\t#" << ssort[i].ticketID << "\t\t " << ssort[i].quantity << "\t\t$" <<  ssort[i].total << "  \t  " <<  ssort[i].description << std::endl;
       total++;
     }
     std::cout << std::endl;
@@ -1259,7 +1308,14 @@ void sortreport(std::vector<struct ssort> list, int type)
         {
           if (list[i].year >= list[i + 1].year)
           {
-            if(list[i].month >= list[i+1].month)
+            if(list[i].month > list[i+1].month)
+            {
+              temporary = list[i];
+              list[i] = list[i + 1];
+              list[i + 1] = temporary;
+              swapped = true;
+            }
+            if(list[i].month == list[i+1].month)
             {
               if(list[i].day > list[i+1].day)
               {
@@ -1284,7 +1340,14 @@ void sortreport(std::vector<struct ssort> list, int type)
         {
           if (list[i].year <= list[i + 1].year)
           {
-            if(list[i].month <= list[i+1].month)
+            if(list[i].month < list[i+1].month)
+            {
+              temporary = list[i];
+              list[i] = list[i + 1];
+              list[i + 1] = temporary;
+              swapped = true;
+            }
+            if(list[i].month == list[i+1].month)
             {
               if(list[i].day < list[i+1].day)
               {
@@ -1296,6 +1359,7 @@ void sortreport(std::vector<struct ssort> list, int type)
             }
           }
         }
+
       }
     }
       break;
@@ -1404,6 +1468,38 @@ double search(struct item search){
     }
   }
   return found;
+}
+
+// hidden admin option, set all inventory items to random between 0 and 30
+void settoRand()
+{
+  int ans, password;
+  std::cout << "Ingresar contrasena de administrador: ";
+  std::cin >> password;
+  if(password ==  1234)
+  {
+    std::cout << "Confirmar que quiere cambiar todos los articulos a existencias entre 0 y 30 al azar. (1 = Confirmar, 2 = Cancelar): ";
+    std::cin >> ans;
+    if(ans == 1) for(int i = 0; i < item.size(); i++) item[i].stock = rand() % 30 + 0;
+    else std::cout << "Cancelado";
+    std::cout << std::endl;
+  }
+}
+
+// save item list to CSV file
+void outputcsv()
+{
+  std::ofstream csvfile;
+  csvfile.open ("itemlist.csv");
+  csvfile << "Producto" << "," << "$Compra" << "," << "$Venta" << "," << "Existencias" << "," << "Stock Min" << "," << "Inactive" << std::endl;
+  for(int i = 0; i < item.size(); i++)
+  {
+    csvfile << item[i].name << "," << item[i].purchaseprice << "," << item[i].sellingprice << "," << item[i].stock << "," << item[i].minstock << "," << item[i].inactive;
+    if(item[i].stock <= item[i].minstock) csvfile << ",*";
+    csvfile << std::endl;
+  }
+  csvfile.close();
+  std::cout << "Archivo CSV creado. " << std::endl << std::endl;
 }
 
 // save items to file
